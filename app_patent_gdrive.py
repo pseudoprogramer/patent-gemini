@@ -61,6 +61,14 @@ def get_gdrive_service(_credentials_json_str):
         service = build('drive', 'v3', credentials=creds)
         print("✅ Google Drive 인증 성공")
         return service
+    except json.JSONDecodeError as e:
+        # [개선] JSON 파싱 오류 시, 더 상세한 디버깅 정보 제공
+        st.error("Google Drive 인증 실패: 입력된 서비스 계정 JSON의 형식이 올바르지 않습니다.")
+        st.error(f"오류 상세 내용: {e}")
+        st.warning("다운로드한 .json 파일의 전체 내용 ('{' 부터 '}' 까지)을 정확히 복사하여 붙여넣었는지 다시 확인해주세요.")
+        # 사용자가 입력한 내용의 앞부분을 보여주어 오류 확인을 도움
+        st.code("입력된 내용 미리보기:\n" + _credentials_json_str[:200] + "...")
+        return None
     except Exception as e:
         st.error(f"Google Drive 인증에 실패했습니다: {e}")
         return None
